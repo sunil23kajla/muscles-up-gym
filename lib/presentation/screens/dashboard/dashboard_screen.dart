@@ -14,6 +14,8 @@ import '../payments/payment_screen.dart';
 import '../payments/financial_report_screen.dart';
 import '../attendance/attendance_screen.dart';
 import '../website/website_manager_screen.dart';
+import '../admin/staff_directory_screen.dart';
+import '../profile/profile_settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -135,6 +137,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.refresh, color: AppColors.textPrimary),
             onPressed: _refreshStats,
             tooltip: 'Refresh Data',
+          ),
+          IconButton(
+            icon: const Icon(Icons.manage_accounts_rounded, color: AppColors.neonBlue),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ProfileSettingsScreen()),
+              );
+            },
+            tooltip: 'Profile Settings',
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: AppColors.neonRed),
@@ -544,6 +555,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
           icon: Icons.security_outlined,
           color: AppColors.neonAmber,
           target: const AdminRequestsScreen(),
+        ),
+      );
+      items.add(
+        _HubItem(
+          label: 'Staff Directory',
+          desc: 'Manage Staff Credentials',
+          icon: Icons.badge_outlined,
+          color: AppColors.neonGreen,
+          target: const StaffDirectoryScreen(),
         ),
       );
       items.add(

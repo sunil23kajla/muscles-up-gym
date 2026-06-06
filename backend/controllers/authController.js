@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.id, role: user.role, pSignature: user.password.substring(0, 15) },
       JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -129,5 +129,127 @@ exports.updateRequestStatus = async (req, res) => {
     res.json({ message: `User status updated to ${status}.`, userId: user.id, status: user.status });
   } catch (error) {
     res.status(500).json({ message: 'Failed to update request status.', error: error.message });
+  }
+};
+
+// Change Password for Currently Logged-In User (Self)
+exports.changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect current password.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password changed successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to change password.', error: error.message });
+  }
+};
+
+// Update Profile Details (Self Name/Email update, e.g., to transfer admin account)
+exports.updateProfile = async (req, res) => {
+  const { name, email } = req.body;
+
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email is already in use by another account.' });
+      }
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    await user.save();
+
+    res.json({
+      message: 'Profile updated successfully.',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update profile.', error: error.message });
+  }
+};
+
+// Fetch Approved Staff List (Admin Only)
+exports.getStaffList = async (req, res) => {
+  try {
+    const staff = await User.findAll({
+      where: { role: 'staff', status: 'approved' },
+      attributes: { exclude: ['password'] },
+    });
+    res.json(staff);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to retrieve staff list.', error: error.message });
+  }
+};
+
+// Delete a Staff Member (Admin Only)
+exports.deleteStaff = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const staff = await User.findByPk(id);
+    if (!staff) {
+      return res.status(404).json({ message: 'Staff member not found.' });
+    }
+
+    if (staff.role === 'admin') {
+      return res.status(403).json({ message: 'Administrators cannot be deleted.' });
+    }
+
+    await staff.destroy();
+    res.json({ message: 'Staff member deleted from database successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete staff member.', error: error.message });
+  }
+};
+
+// Admin Override Password Reset for Staff (Admin Only)
+exports.adminResetPassword = async (req, res) => {
+  const { targetId, newPassword } = req.body;
+
+  try {
+    const user = await User.findByPk(targetId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (user.role === 'admin' && user.id !== req.user.id) {
+      return res.status(403).json({ message: 'You cannot reset password for other Administrators.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: `Password for ${user.name} has been reset successfully.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to reset password.', error: error.message });
   }
 };

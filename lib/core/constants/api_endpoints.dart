@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class ApiEndpoints {
-  static const String pcHostIp = '192.168.1.14';
+  static const String pcHostIp = '192.168.1.22';
 
   static String get baseUrl {
     if (kIsWeb) {
@@ -21,6 +21,10 @@ class ApiEndpoints {
   static const String login = '/auth/login';
   static const String pendingRequests = '/auth/pending-requests';
   static const String updateRequestStatus = '/auth/update-status';
+  static const String changePassword = '/auth/change-password';
+  static const String updateProfile = '/auth/update-profile';
+  static const String staff = '/auth/staff';
+  static const String adminResetPassword = '/auth/admin-reset-password';
 
   // Members paths
   static const String members = '/members';

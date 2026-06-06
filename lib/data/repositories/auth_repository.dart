@@ -60,4 +60,43 @@ class AuthRepository {
       'status': status,
     });
   }
+
+  // Change password of current logged-in user (Self)
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    await _client.post(ApiEndpoints.changePassword, {
+      'oldPassword': oldPassword,
+      'newPassword': newPassword,
+    });
+  }
+
+  // Update profile details of current user (Self - Name/Email, e.g., to transfer admin account)
+  Future<UserModel> updateProfile(String name, String email) async {
+    final response = await _client.put(ApiEndpoints.updateProfile, {
+      'name': name,
+      'email': email,
+    });
+    return UserModel.fromJson(response['user']);
+  }
+
+  // Fetch list of all approved staff members (Admin only)
+  Future<List<UserModel>> getStaffList() async {
+    final response = await _client.get(ApiEndpoints.staff);
+    if (response is List) {
+      return response.map((u) => UserModel.fromJson(u)).toList();
+    }
+    return [];
+  }
+
+  // Delete a staff member from system (Admin only)
+  Future<void> deleteStaff(String staffId) async {
+    await _client.delete('${ApiEndpoints.staff}/$staffId');
+  }
+
+  // Admin manually overrides and resets password for a Staff user (Admin only)
+  Future<void> adminResetPassword(String targetId, String newPassword) async {
+    await _client.post(ApiEndpoints.adminResetPassword, {
+      'targetId': targetId,
+      'newPassword': newPassword,
+    });
+  }
 }

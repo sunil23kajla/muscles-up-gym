@@ -9,12 +9,18 @@ import 'presentation/providers/website_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/auth/pending_screen.dart';
 import 'presentation/screens/dashboard/dashboard_screen.dart';
+import 'core/network/api_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   final authProvider = AuthProvider();
   await authProvider.loadPersistedLogin();
+
+  // Listen to global 401 token invalidations to force direct redirect to login screen
+  ApiClient.onSessionExpired = () {
+    authProvider.logout();
+  };
   
   runApp(
     MultiProvider(

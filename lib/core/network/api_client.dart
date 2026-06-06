@@ -5,6 +5,7 @@ import '../constants/api_endpoints.dart';
 
 class ApiClient {
   static String? _token;
+  static void Function()? onSessionExpired;
 
   static void _logRequest(String method, String url, {dynamic body}) {
     print('━━━━━━━━━━━━━━━━━━━━ 🌐 API REQUEST ━━━━━━━━━━━━━━━━━━━━');
@@ -60,6 +61,9 @@ class ApiClient {
     if (statusCode >= 200 && statusCode < 300) {
       return jsonResponse;
     } else {
+      if (statusCode == 401) {
+        onSessionExpired?.call();
+      }
       String errorMessage = 'Something went wrong';
       if (jsonResponse is Map && jsonResponse.containsKey('message')) {
         errorMessage = jsonResponse['message'];
