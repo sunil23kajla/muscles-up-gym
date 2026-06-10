@@ -12,10 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
   <!-- Premium Styles -->
-  <link rel="stylesheet" href="style.css?v=3">
-  
-  <!-- AOS Animation CSS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -42,7 +39,7 @@
   <!-- 3. Premium Unblocked Hero Section -->
   <section class="hero-section">
     <div class="hero-overlay"></div>
-    <div class="hero-content" data-aos="fade-up">
+    <div class="hero-content">
       <div class="hero-tag">PREMIUM ATHLETIC CLUB</div>
       <h1 class="hero-title">PUSH YOUR LIMITS<br><span>GAIN REAL STRENGTH</span></h1>
       <p class="hero-desc">
@@ -55,7 +52,7 @@
   <!-- 4. Dynamic Counter Statistics Dashboard -->
   <section class="stats-section">
     <div class="container">
-      <div class="section-header" data-aos="fade-down">
+      <div class="section-header">
         <span class="section-tag">OUR CURRENT REACH</span>
         <h2 class="section-title">THE NUMBERS DEFINE US</h2>
       </div>
@@ -73,7 +70,7 @@
           <div class="stat-label">Expert Coaches</div>
         </div>
         
-        <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+        <div class="stat-card">
           <div class="stat-icon">🏆</div>
           <div id="statYears" class="stat-number">5+</div>
           <div class="stat-label">Years Of Glory</div>
@@ -85,7 +82,7 @@
   <!-- 5. Dynamic Pricing Membership Plans -->
   <section id="plans-section" class="plans-section alt-bg">
     <div class="container">
-      <div class="section-header" data-aos="fade-down">
+      <div class="section-header">
         <span class="section-tag">AFFORDABLE SUBSCRIPTIONS</span>
         <h2 class="section-title">CHOOSE YOUR PASS TO SUCCESS</h2>
       </div>
@@ -100,7 +97,7 @@
   <!-- 6. Dynamic Video Clips Section (Motivational Workout Loops) -->
   <section id="videos-section" class="videos-section hidden">
     <div class="container">
-      <div class="section-header" data-aos="fade-down">
+      <div class="section-header">
         <span class="section-tag">MOTIVATIONAL WORKOUT CLIPS</span>
         <h2 class="section-title">WITNESS THE HARD WORK</h2>
       </div>
@@ -114,7 +111,7 @@
   <!-- 7. Dynamic Photo Gallery (Uploaded Gym Facilities) -->
   <section id="gallery-section" class="gallery-section">
     <div class="container">
-      <div class="section-header" data-aos="fade-down">
+      <div class="section-header">
         <span class="section-tag">REAL SHOTS FROM INSIDE</span>
         <h2 class="section-title">OUR STATE-OF-THE-ART SPACE</h2>
       </div>
@@ -128,14 +125,14 @@
   <!-- 8. Contact & Lead Inquiry Form Split Section -->
   <section id="contact-section" class="contact-section alt-bg">
     <div class="container">
-      <div class="section-header" data-aos="fade-down">
+      <div class="section-header">
         <span class="section-tag">REQUEST A CALL BACK</span>
         <h2 class="section-title">START WORKING OUT TODAY</h2>
       </div>
       
       <div class="contact-split-grid">
         <!-- Contact Details Left -->
-        <div class="contact-details" data-aos="fade-right">
+        <div class="contact-details">
           <div class="contact-item">
             <div class="contact-icon">📍</div>
             <div class="contact-info">
@@ -162,7 +159,7 @@
         </div>
         
         <!-- Contact Form Right -->
-        <div class="contact-form-box" data-aos="fade-left">
+        <div class="contact-form-box">
           <form id="leadInquiryForm">
             <!-- Form Status Alerts (Inline) -->
             <div id="formStatus" class="form-status hidden"></div>
@@ -213,13 +210,7 @@
     <span id="toastMessage">Selected Plan!</span>
   </div>
 
-  <!-- AOS Animation JS -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init({ once: true, duration: 800, disable: 'mobile' });
-  </script>
-
   <!-- JavaScript Entry Point -->
-  <script src="app.js?v=4"></script>
+  <script src="app.js"></script>
 </body>
 </html>

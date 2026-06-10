@@ -7,6 +7,7 @@ import '../../../data/models/member_model.dart';
 import '../../providers/member_provider.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/member_photo_avatar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ExpiryTrackerScreen extends StatefulWidget {
   const ExpiryTrackerScreen({super.key});
@@ -40,7 +41,11 @@ class _ExpiryTrackerScreenState extends State<ExpiryTrackerScreen> with SingleTi
   // Pre-fill and launch WhatsApp with custom text templates
   Future<void> _sendWhatsApp(MemberModel member) async {
     final name = member.name;
-    final phone = member.phone.replaceAll(RegExp(r'\s+'), ''); // Strip whitespaces
+    // Strip all non-digits
+    String phone = member.phone.replaceAll(RegExp(r'\D'), ''); 
+    if (phone.length == 10) {
+      phone = '91$phone'; // Add India country code if exactly 10 digits
+    }
     
     // Construct tailored template
     String textMessage = '';
@@ -57,13 +62,9 @@ class _ExpiryTrackerScreenState extends State<ExpiryTrackerScreen> with SingleTi
     final uri = Uri.parse(urlString);
 
     try {
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        throw 'Could not launch WhatsApp client.';
-      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      _showToast(e.toString(), true);
+      _showToast("Could not launch WhatsApp. Error: $e", true);
     }
   }
 
@@ -79,9 +80,13 @@ class _ExpiryTrackerScreenState extends State<ExpiryTrackerScreen> with SingleTi
       textMessage = "Hi $name, friendly reminder that your Muscles Up Gym membership expires on ${member.subscriptionEnd}. Tap to renew! 💪";
     }
 
-    final encodedMessage = Uri.encodeComponent(textMessage);
-    final urlString = 'sms:$phone?body=$encodedMessage';
-    final uri = Uri.parse(urlString);
+    final Uri uri = Uri(
+      scheme: 'sms',
+      path: phone,
+      queryParameters: <String, String>{
+        'body': textMessage,
+      },
+    );
 
     try {
       if (await canLaunchUrl(uri)) {
@@ -236,7 +241,7 @@ class _ExpiryTrackerScreenState extends State<ExpiryTrackerScreen> with SingleTi
                   ),
                   const SizedBox(width: 4),
                   IconButton(
-                    icon: const Icon(Icons.message_outlined, color: AppColors.neonGreen, size: 20),
+                    icon: const FaIcon(FontAwesomeIcons.whatsapp, color: AppColors.neonGreen, size: 22),
                     onPressed: () => _sendWhatsApp(member),
                     tooltip: 'WhatsApp Reminder',
                   ),

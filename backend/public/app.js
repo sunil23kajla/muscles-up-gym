@@ -75,7 +75,9 @@ function renderAnnouncement(announcement) {
   
   if (!bar || !scroller) return;
 
-  if (announcement && announcement.show && announcement.text && announcement.text.trim()) {
+  const isShow = announcement && (announcement.show === true || announcement.show === 'true' || announcement.show === '1');
+
+  if (isShow && announcement.text && announcement.text.trim()) {
     scroller.textContent = announcement.text;
     bar.classList.remove('hidden');
   } else {
@@ -141,10 +143,12 @@ function renderPlansAndPricing(plans) {
     }
   ];
 
-  activePlans.forEach(plan => {
+  activePlans.forEach((plan, index) => {
     // A. Generate Pricing Cards
     const card = document.createElement('div');
     card.className = `plan-card ${plan.isFeatured ? 'featured' : ''}`;
+    card.setAttribute('data-aos', 'fade-up');
+    card.setAttribute('data-aos-delay', (index * 100).toString());
 
     let badgeHtml = '';
     if (plan.badge && plan.badge.trim() !== '') {
@@ -231,12 +235,14 @@ function renderVideos(videos) {
   if (navLink) navLink.classList.remove('hidden');
   vGrid.innerHTML = '';
 
-  activeVideos.forEach(videoUrl => {
+  activeVideos.forEach((videoUrl, index) => {
     const embedUrl = getYouTubeEmbedUrl(videoUrl);
     if (!embedUrl) return;
 
     const vCard = document.createElement('div');
     vCard.className = 'video-card';
+    vCard.setAttribute('data-aos', 'fade-up');
+    vCard.setAttribute('data-aos-delay', (index * 100).toString());
     vCard.innerHTML = `
       <div class="video-aspect-box">
         <iframe 
@@ -277,6 +283,8 @@ function renderGallery(gallery) {
   activePhotos.forEach((src, index) => {
     const card = document.createElement('div');
     card.className = 'gallery-card';
+    card.setAttribute('data-aos', 'zoom-in');
+    card.setAttribute('data-aos-delay', (index * 100).toString());
     
     // Check if Base64, set appropriate source
     let imgSource = src;

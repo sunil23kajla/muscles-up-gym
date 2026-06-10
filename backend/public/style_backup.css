@@ -180,7 +180,7 @@ body {
   min-height: 85vh;
   display: flex;
   align-items: center;
-  background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600') center/cover no-repeat fixed;
+  background: url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1600') center/cover no-repeat fixed;
 }
 
 .hero-overlay {
@@ -838,11 +838,5 @@ section {
   
   .contact-form-box {
     padding: 32px 24px;
-  }
-  
-  /* Force AOS elements to be visible on mobile if script fails */
-  [data-aos] {
-    opacity: 1 !important;
-    transform: none !important;
   }
 }

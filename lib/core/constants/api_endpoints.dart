@@ -5,15 +5,7 @@ class ApiEndpoints {
   static const String pcHostIp = '192.168.1.22';
 
   static String get baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:5000/api';
-    }
-    try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        return 'http://$pcHostIp:5000/api';
-      }
-    } catch (_) {}
-    return 'http://localhost:5000/api';
+    return 'https://musclesupgym.com/api';
   }
 
   // Auth paths
