@@ -95,6 +95,16 @@ try {
             $controller->handleRequest($action, $routeParts, $input);
             break;
 
+        case 'updatedb':
+            try {
+                $db->exec("ALTER TABLE payments ADD COLUMN notes TEXT NULL");
+                $db->exec("ALTER TABLE demo_payments ADD COLUMN notes TEXT NULL");
+                sendJson(200, ["message" => "Database updated successfully!"]);
+            } catch (PDOException $e) {
+                sendJson(200, ["message" => "Columns already exist or error: " . $e->getMessage()]);
+            }
+            break;
+
         default:
             sendJson(404, ["message" => "Endpoint not found"]);
             break;
