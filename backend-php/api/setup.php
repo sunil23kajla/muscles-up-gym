@@ -130,6 +130,7 @@ try {
         memberId VARCHAR(36) NOT NULL,
         amount DECIMAL(10,2) NOT NULL,
         paymentDate DATE NOT NULL,
+        notes TEXT,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (memberId) REFERENCES members(id) ON DELETE CASCADE
     )");
@@ -140,6 +141,7 @@ try {
         memberId VARCHAR(36) NOT NULL,
         amount DECIMAL(10,2) NOT NULL,
         paymentDate DATE NOT NULL,
+        notes TEXT,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (memberId) REFERENCES demo_members(id) ON DELETE CASCADE
     )");

@@ -45,7 +45,7 @@ class MemberModel {
       subscriptionStart: json['subscriptionStart'] ?? '',
       subscriptionEnd: json['subscriptionEnd'] ?? '',
       status: json['status'] ?? 'pending',
-      plan: json['plan'] ?? '1 Month',
+      plan: json['plan'] ?? json['subscriptionType'] ?? '1 Month',
       payments: json['payments'] ?? const [],
       attendance: json['attendance'] ?? const [],
       workout: json['workout'],

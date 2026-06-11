@@ -180,7 +180,7 @@ class MemberController {
         $bloodGroup = array_key_exists('bloodGroup', $input) ? $input['bloodGroup'] : $member['bloodGroup'];
         $subscriptionStart = isset($input['subscriptionStart']) ? $input['subscriptionStart'] : $member['subscriptionStart'];
         $subscriptionEnd = isset($input['subscriptionEnd']) ? $input['subscriptionEnd'] : $member['subscriptionEnd'];
-        $plan = array_key_exists('plan', $input) ? $input['plan'] : $member['plan'];
+        $plan = array_key_exists('plan', $input) ? $input['plan'] : $member['subscriptionType'];
 
         $member['name'] = $name;
         $member['phone'] = $phone;
