@@ -42,4 +42,11 @@ class WebsiteRepository {
     await _client.delete('${ApiEndpoints.inquiries}/$id');
     return true;
   }
+
+  // 6. Upload a gallery media file (image/video)
+  Future<String> uploadGalleryMedia(String filePath) async {
+    final response = await _client.uploadMedia('/upload_gallery.php', filePath);
+    // Assuming the PHP script returns { "url": "..." }
+    return response['url'] as String;
+  }
 }

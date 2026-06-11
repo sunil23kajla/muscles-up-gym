@@ -257,16 +257,26 @@ function renderVideos(videos) {
 }
 
 /**
- * Helper: Parse any YouTube / Shorts / Share links to clean Iframe Embed links
+ * Helper: Parse any YouTube / Shorts / Share links AND Instagram Reels to clean Iframe Embed links
  */
 function getYouTubeEmbedUrl(url) {
   if (!url) return '';
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
-  const match = url.match(regExp);
+  
+  // 1. Check Instagram
+  const instaReg = /instagram\.com\/(?:p|reel)\/([a-zA-Z0-9_-]+)/i;
+  const instaMatch = url.match(instaReg);
+  if (instaMatch && instaMatch[1]) {
+    return `https://www.instagram.com/p/${instaMatch[1]}/embed/`;
+  }
+
+  // 2. Check YouTube
+  const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const match = url.match(ytRegExp);
   
   if (match && match[2].length === 11) {
-    return `https://www.youtube.com/embed/${match[2]}`;
+    return `https://www.youtube.com/embed/${match[2]}?autoplay=0`;
   }
+  
   return url; // Fallback
 }
 
@@ -286,11 +296,17 @@ function renderGallery(gallery) {
     card.setAttribute('data-aos', 'zoom-in');
     card.setAttribute('data-aos-delay', (index * 100).toString());
     
-    // Check if Base64, set appropriate source
-    let imgSource = src;
-    card.innerHTML = `
-      <img src="${imgSource}" alt="Muscles Up Gym Facility Shot #${index + 1}" loading="lazy">
-    `;
+    // Check if Video or Image
+    let isVideo = src.match(/\.(mp4|mov|webm|avi)$/i) || src.startsWith('data:video/');
+    if (isVideo) {
+      card.innerHTML = `
+        <video src="${src}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover; border-radius:12px; pointer-events:none;"></video>
+      `;
+    } else {
+      card.innerHTML = `
+        <img src="${src}" alt="Muscles Up Gym Facility Shot #${index + 1}" loading="lazy">
+      `;
+    }
     grid.appendChild(card);
   });
 }

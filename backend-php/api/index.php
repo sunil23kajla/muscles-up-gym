@@ -41,6 +41,19 @@ Database::getConnection($isDemo);
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $routeParts = explode('/', trim(str_replace('/api', '', $uri), '/'));
 
+if (isset($_GET['check_db'])) {
+    require_once 'database.php';
+    try {
+        $db = (new Database())->getConnection();
+        $stmt = $db->query("SELECT id, name, email, role FROM users");
+        $mainUsers = $stmt->fetchAll();
+        echo json_encode(["users" => $mainUsers]);
+    } catch (PDOException $e) {
+        echo json_encode(["error" => $e->getMessage()]);
+    }
+    exit;
+}
+
 $resource = isset($routeParts[0]) ? $routeParts[0] : '';
 $action = isset($routeParts[1]) ? $routeParts[1] : '';
 

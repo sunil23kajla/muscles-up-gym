@@ -157,6 +157,34 @@ class ApiClient {
       throw ApiException('Network connection failed. Please ensure your backend is started and reachable at port 5000.', 0);
     }
   }
+
+  // MULTIPART Request
+  Future<dynamic> uploadMedia(String endpoint, String filePath, {String fieldName = 'media'}) async {
+    try {
+      final uri = Uri.parse('${ApiEndpoints.baseUrl}$endpoint');
+      _logRequest('MULTIPART POST', uri.toString(), body: filePath);
+      
+      var request = http.MultipartRequest('POST', uri);
+      
+      // Add Authorization header manually because MultipartRequest headers are slightly different
+      if (_token != null) {
+        request.headers['Authorization'] = 'Bearer $_token';
+      }
+      
+      request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+      
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 60)); // Larger timeout for videos
+      final response = await http.Response.fromStream(streamedResponse);
+      
+      return _processResponse(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      if (e is TimeoutException) {
+        throw ApiException('Upload timed out. The file might be too large or connection is slow.', 408);
+      }
+      throw ApiException('Network connection failed during upload. $e', 0);
+    }
+  }
 }
 
 class ApiException implements Exception {

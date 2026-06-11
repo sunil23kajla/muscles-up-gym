@@ -157,13 +157,34 @@ class WebsiteProvider extends ChangeNotifier {
     }
   }
 
-  // 1b. Upload / Add a dynamic Base64 photo to the gallery
+  // 1b. Upload / Add a dynamic Base64 photo to the gallery (Legacy)
   Future<bool> addGalleryImage(String base64Image) async {
     _errorMessage = null;
     notifyListeners();
 
     try {
       final updatedGallery = List<String>.from(_gallery)..add(base64Image);
+      await _repo.updateWebsiteSetting('gallery', updatedGallery);
+      _gallery = updatedGallery;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // 1b-2. Upload Media File to Gallery
+  Future<bool> uploadGalleryMediaFile(String filePath) async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // 1. Upload to PHP server
+      final url = await _repo.uploadGalleryMedia(filePath);
+      // 2. Append the URL to the gallery array in DB
+      final updatedGallery = List<String>.from(_gallery)..add(url);
       await _repo.updateWebsiteSetting('gallery', updatedGallery);
       _gallery = updatedGallery;
       notifyListeners();

@@ -206,39 +206,37 @@ class _WebsiteManagerScreenState extends State<WebsiteManagerScreen>
     }
   }
 
-  // Pick image from local gallery, encode as base64 and save to server gallery
-  Future<void> _pickAndUploadImage() async {
+  // Pick media (image/video) from local gallery, upload to server, and save URL
+  Future<void> _pickAndUploadMedia() async {
     final picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50, // Optimize sizing/resolution
+    final XFile? pickedFile = await picker.pickMedia(
+      imageQuality: 50, // Optimize sizing/resolution for images
     );
 
     if (pickedFile == null) return;
 
     setState(() => _isUploadingPhoto = true);
     try {
-      final bytes = await pickedFile.readAsBytes();
-      final String base64Image =
-          "data:image/jpeg;base64,${base64Encode(bytes)}";
-
       if (!mounted) return;
       final provider = Provider.of<WebsiteProvider>(context, listen: false);
-      final success = await provider.addGalleryImage(base64Image);
+      
+      // Upload using the new file upload API endpoint
+      final success = await provider.uploadGalleryMediaFile(pickedFile.path);
 
       if (mounted) setState(() => _isUploadingPhoto = false);
       if (!mounted) return;
+      
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Gallery photo uploaded successfully!'),
+            content: Text('Gallery media uploaded successfully!'),
             backgroundColor: AppColors.neonGreen,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(provider.errorMessage ?? 'Failed to upload image.'),
+            content: Text(provider.errorMessage ?? 'Failed to upload media.'),
             backgroundColor: AppColors.neonRed,
           ),
         );
@@ -247,7 +245,7 @@ class _WebsiteManagerScreenState extends State<WebsiteManagerScreen>
       if (mounted) setState(() => _isUploadingPhoto = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error converting image: $e'),
+          content: Text('Error uploading media: $e'),
           backgroundColor: AppColors.neonRed,
         ),
       );
@@ -884,10 +882,10 @@ class _WebsiteManagerScreenState extends State<WebsiteManagerScreen>
                   ),
                 const SizedBox(height: 20),
                 NeonButton(
-                  text: 'UPLOAD NEW PHOTO',
+                  text: 'UPLOAD PHOTO / VIDEO',
                   icon: Icons.add_photo_alternate_outlined,
                   isLoading: _isUploadingPhoto,
-                  onPressed: _pickAndUploadImage,
+                  onPressed: _pickAndUploadMedia,
                   gradient: AppColors.cyberGlow,
                 ),
               ],
