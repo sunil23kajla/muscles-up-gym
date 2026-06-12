@@ -235,14 +235,35 @@ function renderVideos(videos) {
   if (navLink) navLink.classList.remove('hidden');
   vGrid.innerHTML = '';
 
+  let hasInsta = false;
   activeVideos.forEach((videoUrl, index) => {
-    const embedUrl = getYouTubeEmbedUrl(videoUrl);
-    if (!embedUrl) return;
-
     const vCard = document.createElement('div');
     vCard.className = 'video-card';
     vCard.setAttribute('data-aos', 'fade-up');
     vCard.setAttribute('data-aos-delay', (index * 100).toString());
+
+    // 1. Check Instagram
+    const instaReg = /instagram\.com\/(?:p|reel)\/([a-zA-Z0-9_-]+)/i;
+    const instaMatch = videoUrl.match(instaReg);
+    if (instaMatch && instaMatch[1]) {
+      hasInsta = true;
+      vCard.style.display = 'flex';
+      vCard.style.justifyContent = 'center';
+      vCard.style.alignItems = 'center';
+      vCard.style.background = '#000';
+      vCard.style.borderRadius = '12px';
+      vCard.style.overflow = 'hidden';
+      vCard.innerHTML = `
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/${instaMatch[1]}/" data-instgrm-version="14" style="background:#000; border:0; margin: 0; padding:0; width:100%;"></blockquote>
+      `;
+      vGrid.appendChild(vCard);
+      return;
+    }
+
+    // 2. Fallback to YouTube
+    const embedUrl = getYouTubeEmbedUrl(videoUrl);
+    if (!embedUrl) return;
+
     vCard.innerHTML = `
       <div class="video-aspect-box">
         <iframe 
@@ -254,6 +275,20 @@ function renderVideos(videos) {
     `;
     vGrid.appendChild(vCard);
   });
+
+  if (hasInsta) {
+    if (!window.instgrm) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.instagram.com/embed.js";
+      script.onload = () => {
+        if (window.instgrm) window.instgrm.Embeds.process();
+      };
+      document.body.appendChild(script);
+    } else {
+      setTimeout(() => window.instgrm.Embeds.process(), 100);
+    }
+  }
 }
 
 /**
