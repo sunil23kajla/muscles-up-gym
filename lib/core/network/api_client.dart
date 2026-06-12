@@ -173,7 +173,7 @@ class ApiClient {
       
       request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
       
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60)); // Larger timeout for videos
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 300)); // 5 min timeout for large videos
       final response = await http.Response.fromStream(streamedResponse);
       
       return _processResponse(response);

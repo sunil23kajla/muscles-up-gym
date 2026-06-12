@@ -296,17 +296,26 @@ function renderGallery(gallery) {
     card.setAttribute('data-aos', 'zoom-in');
     card.setAttribute('data-aos-delay', (index * 100).toString());
     
-    // Check if Video or Image
-    let isVideo = src.match(/\.(mp4|mov|webm|avi)$/i) || src.startsWith('data:video/');
-    if (isVideo) {
+    // Check if it's an embeddable link (YouTube / Instagram)
+    const embedUrl = getYouTubeEmbedUrl(src);
+    if (embedUrl !== src) {
       card.innerHTML = `
-        <video src="${src}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover; border-radius:12px; pointer-events:none;"></video>
+        <iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%; height:100%; border:none; border-radius:12px;"></iframe>
       `;
     } else {
-      card.innerHTML = `
-        <img src="${src}" alt="Muscles Up Gym Facility Shot #${index + 1}" loading="lazy">
-      `;
+      // Check if direct Video or Image file
+      let isVideo = src.match(/\.(mp4|mov|webm|avi)$/i) || src.startsWith('data:video/');
+      if (isVideo) {
+        card.innerHTML = `
+          <video src="${src}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover; border-radius:12px; pointer-events:none;"></video>
+        `;
+      } else {
+        card.innerHTML = `
+          <img src="${src}" alt="Muscles Up Gym Facility Shot #${index + 1}" loading="lazy">
+        `;
+      }
     }
+    
     grid.appendChild(card);
   });
 }
